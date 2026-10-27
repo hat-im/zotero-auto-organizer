@@ -27,3 +27,6 @@ pref("__prefsPrefix__.batchMode", false);
 // Auto-classify unfiled items once more than this many are unfiled (off by default)
 pref("__prefsPrefix__.autoClassifyUnfiled", false);
 pref("__prefsPrefix__.autoClassifyThreshold", 5);
+
+// Deepest collection level offered to the AI (0 = unlimited, 1 = top-level only)
+pref("__prefsPrefix__.maxDepth", 0);

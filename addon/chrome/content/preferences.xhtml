@@ -257,6 +257,27 @@
   </groupbox>
 
   <groupbox>
+    <label><html:h2 id="zotero-prefpane-__addonRef__-structureTitle">Collection Structure</html:h2></label>
+    <vbox style="margin: 10px 0;">
+      <hbox align="center">
+        <html:label id="zotero-prefpane-__addonRef__-maxDepthLabel" for="zotero-prefpane-__addonRef__-maxDepth" style="width: 180px;"
+          >Maximum Depth</html:label
+        >
+        <html:input
+          type="number"
+          min="0"
+          id="zotero-prefpane-__addonRef__-maxDepth"
+          preference="__prefsPrefix__.maxDepth"
+          style="width: 80px;"
+        />
+      </hbox>
+      <html:label id="zotero-prefpane-__addonRef__-maxDepthHelp" style="margin-left: 20px; color: #666; font-size: 11px;">
+        Collections nested deeper than this level are not offered to the AI; a collection at this level is treated as a leaf. 0 means no limit.
+      </html:label>
+    </vbox>
+  </groupbox>
+
+  <groupbox>
     <label><html:h2 id="zotero-prefpane-__addonRef__-translationTitle">Translation Settings</html:h2></label>
     <vbox style="margin: 10px 0;">
       <hbox align="center">

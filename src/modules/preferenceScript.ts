@@ -154,6 +154,11 @@ function localizePrefsUI(doc: Document) {
   setText("autoClassifyThresholdLabel", "prefs.autoClassifyThreshold");
   setText("autoClassifyHelp", "prefs.autoClassifyUnfiledHelp");
 
+  // Collection structure section
+  setText("structureTitle", "prefs.structureTitle");
+  setText("maxDepthLabel", "prefs.maxDepth");
+  setText("maxDepthHelp", "prefs.maxDepthHelp");
+
   // Translation section
   setText(
     "enableChineseTranslation",
