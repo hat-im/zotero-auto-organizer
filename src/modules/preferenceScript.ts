@@ -175,6 +175,13 @@ function localizePrefsUI(doc: Document) {
   setText("seedHelp", "prefs.seedCollectionsHelp");
   setText("createSeed", "prefs.createSeed", "label");
 
+  // New collections section
+  setText("proposalsTitle", "prefs.proposalsTitle");
+  setText("proposeNewCollections", "prefs.proposeNewCollections", "label");
+  setText("proposalMinItemsLabel", "prefs.proposalMinItems");
+  setText("allowNewTopLevel", "prefs.allowNewTopLevel", "label");
+  setText("proposalsHelp", "prefs.proposalsHelp");
+
   // Translation section
   setText(
     "enableChineseTranslation",

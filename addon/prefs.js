@@ -33,3 +33,9 @@ pref("__prefsPrefix__.maxDepth", 0);
 
 // Seed collections: one path per line (e.g. Algorithms/Variational)
 pref("__prefsPrefix__.seedCollections", "");
+
+// Let the AI suggest new collections; ask before creating one once this many items share it
+pref("__prefsPrefix__.proposeNewCollections", false);
+pref("__prefsPrefix__.proposalMinItems", 10);
+pref("__prefsPrefix__.allowNewTopLevel", false);
+pref("__prefsPrefix__.pendingProposals", "{}");

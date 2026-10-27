@@ -293,6 +293,41 @@
   </groupbox>
 
   <groupbox>
+    <label><html:h2 id="zotero-prefpane-__addonRef__-proposalsTitle">New Collections</html:h2></label>
+    <vbox style="margin: 10px 0;">
+      <hbox align="center" style="margin-bottom: 8px;">
+        <checkbox
+          id="zotero-prefpane-__addonRef__-proposeNewCollections"
+          preference="__prefsPrefix__.proposeNewCollections"
+          label=""
+        />
+      </hbox>
+      <hbox align="center" style="margin-bottom: 8px;">
+        <html:label id="zotero-prefpane-__addonRef__-proposalMinItemsLabel" for="zotero-prefpane-__addonRef__-proposalMinItems" style="width: 180px;"
+          >Items needed</html:label
+        >
+        <html:input
+          type="number"
+          min="1"
+          id="zotero-prefpane-__addonRef__-proposalMinItems"
+          preference="__prefsPrefix__.proposalMinItems"
+          style="width: 80px;"
+        />
+      </hbox>
+      <hbox align="center" style="margin-bottom: 8px;">
+        <checkbox
+          id="zotero-prefpane-__addonRef__-allowNewTopLevel"
+          preference="__prefsPrefix__.allowNewTopLevel"
+          label=""
+        />
+      </hbox>
+      <html:label id="zotero-prefpane-__addonRef__-proposalsHelp" style="margin-left: 20px; color: #666; font-size: 11px;">
+        When enabled, the AI may suggest a new collection for items that fit nowhere. Those items stay unfiled until enough of them share a suggestion; then you are asked whether to create the collection and move them in. The maximum depth above applies to new collections too.
+      </html:label>
+    </vbox>
+  </groupbox>
+
+  <groupbox>
     <label><html:h2 id="zotero-prefpane-__addonRef__-translationTitle">Translation Settings</html:h2></label>
     <vbox style="margin: 10px 0;">
       <hbox align="center">

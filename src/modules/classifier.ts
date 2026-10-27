@@ -3,6 +3,11 @@ import { AICollectionCandidate, callAI } from "./api";
 import { getString } from "../utils/locale";
 import { getPref } from "../utils/prefs";
 import {
+  getProposalOptions,
+  recordSuggestion,
+  reviewSuggestions,
+} from "./newCollections";
+import {
   buildCollectionNodes,
   flattenNodes,
   getLeafOptions,
@@ -1105,8 +1110,10 @@ async function classifyItemsOneByOne(
         title,
         abstract,
         collectionOptions,
-        enableTranslation
+        enableTranslation,
+        getProposalOptions(libraryID)
       );
+      recordSuggestion(currentItem, aiResult);
       const chineseTitle = aiResult.chineseTitle;
       const validOptions = resolveAICollectionOptions(
         aiResult,
@@ -1251,8 +1258,10 @@ async function classifyItemsBatch(
         title,
         abstract,
         collectionOptions,
-        enableTranslation
+        enableTranslation,
+        getProposalOptions(libraryID)
       );
+      recordSuggestion(currentItem, aiResult);
       const chineseTitle = aiResult.chineseTitle;
       const validOptions = resolveAICollectionOptions(
         aiResult,
@@ -1414,4 +1423,6 @@ export async function classifyItems(items: Zotero.Item[]): Promise<void> {
       getString("result.added") || "Collections added:"
     } ${result.totalAdded}${egg}`
   );
+
+  await reviewSuggestions(libraryID, regularItems);
 }
