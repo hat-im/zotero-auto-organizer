@@ -4,6 +4,11 @@ import { testConnection } from "./api";
 import { getPref, setPref } from "../utils/prefs";
 import { DEFAULT_PROMPT } from "../utils/constants";
 import type { ProviderKind } from "./llm";
+import { parseSeed } from "./seed";
+import {
+  createMissingCollections,
+  getCollectionsByPath,
+} from "./collectionWriter";
 
 interface ApiConfig {
   name: string;
@@ -75,6 +80,14 @@ function initPrefsUI() {
     const savedPrompt = getPref("customPrompt") as string;
     promptTextarea.value =
       savedPrompt && savedPrompt !== "undefined" ? savedPrompt : DEFAULT_PROMPT;
+  }
+
+  // Initialize seed collections textarea
+  const seedTextarea = doc.querySelector(
+    `#zotero-prefpane-${config.addonRef}-seedCollections`
+  ) as HTMLTextAreaElement;
+  if (seedTextarea) {
+    seedTextarea.value = (getPref("seedCollections") as string) || "";
   }
 
   // Initialize config selector
@@ -158,6 +171,9 @@ function localizePrefsUI(doc: Document) {
   setText("structureTitle", "prefs.structureTitle");
   setText("maxDepthLabel", "prefs.maxDepth");
   setText("maxDepthHelp", "prefs.maxDepthHelp");
+  setText("seedLabel", "prefs.seedCollections");
+  setText("seedHelp", "prefs.seedCollectionsHelp");
+  setText("createSeed", "prefs.createSeed", "label");
 
   // Translation section
   setText(
@@ -295,6 +311,38 @@ function bindPrefEvents() {
     ?.addEventListener("command", (e: any) => {
       const selectedValue = e.target.value;
       loadConfig(selectedValue);
+    });
+
+  // Create seed collections button
+  doc
+    .querySelector(`#zotero-prefpane-${config.addonRef}-createSeed`)
+    ?.addEventListener("click", async () => {
+      const seedTextarea = doc.querySelector(
+        `#zotero-prefpane-${config.addonRef}-seedCollections`
+      ) as HTMLTextAreaElement;
+      setPref("seedCollections", seedTextarea.value);
+
+      const libraryID = Zotero.Libraries.userLibraryID;
+      const existing = getCollectionsByPath(libraryID);
+      const missing = parseSeed(
+        seedTextarea.value,
+        Number(getPref("maxDepth")) || 0
+      ).filter((path) => !existing.has(path));
+
+      if (missing.length === 0) {
+        win.alert(getString("prefs.seedNothing"));
+        return;
+      }
+      const preview = missing.slice(0, 15).join("\n");
+      if (
+        !win.confirm(
+          `${getString("prefs.seedConfirm")} ${missing.length}\n\n${preview}`
+        )
+      ) {
+        return;
+      }
+      const created = await createMissingCollections(libraryID, missing);
+      win.alert(`${getString("prefs.seedCreated")} ${created.length}`);
     });
 
   // Save config button

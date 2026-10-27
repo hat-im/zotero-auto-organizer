@@ -274,6 +274,21 @@
       <html:label id="zotero-prefpane-__addonRef__-maxDepthHelp" style="margin-left: 20px; color: #666; font-size: 11px;">
         Collections nested deeper than this level are not offered to the AI; a collection at this level is treated as a leaf. 0 means no limit.
       </html:label>
+
+      <html:label id="zotero-prefpane-__addonRef__-seedLabel" style="margin-top: 12px; font-weight: bold;">Seed Collections</html:label>
+      <html:label id="zotero-prefpane-__addonRef__-seedHelp" style="margin-bottom: 5px; color: #666; font-size: 11px;">
+        One collection path per line, e.g. Algorithms/Variational. Lines starting with # are ignored.
+      </html:label>
+      <html:textarea
+        id="zotero-prefpane-__addonRef__-seedCollections"
+        style="width: 100%; min-height: 80px; resize: vertical; font-family: monospace;"
+      ></html:textarea>
+      <hbox style="margin-top: 8px;">
+        <button
+          id="zotero-prefpane-__addonRef__-createSeed"
+          label=""
+        />
+      </hbox>
     </vbox>
   </groupbox>
 

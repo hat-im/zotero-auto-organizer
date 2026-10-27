@@ -28,7 +28,7 @@
     "restart": "npm run restart-dev",
     "release": "release-it",
     "lint": "prettier --write . && eslint . --ext .ts --fix",
-    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"test/**/*.test.mts\"",
+    "test": "node --import tsx --test \"test/**/*.test.mts\"",
     "update-deps": "npm update --save"
   },
   "repository": {
@@ -62,6 +62,7 @@
     "prettier": "2.8.8",
     "release-it": "^15.10.3",
     "replace-in-file": "^6.3.5",
+    "tsx": "^4.23.15",
     "typescript": "^5.0.4",
     "zotero-types": "^1.0.14"
   },

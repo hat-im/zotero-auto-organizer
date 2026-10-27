@@ -30,3 +30,6 @@ pref("__prefsPrefix__.autoClassifyThreshold", 5);
 
 // Deepest collection level offered to the AI (0 = unlimited, 1 = top-level only)
 pref("__prefsPrefix__.maxDepth", 0);
+
+// Seed collections: one path per line (e.g. Algorithms/Variational)
+pref("__prefsPrefix__.seedCollections", "");
