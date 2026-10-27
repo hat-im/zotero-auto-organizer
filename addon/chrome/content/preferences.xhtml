@@ -36,6 +36,22 @@
       </hbox>
 
       <hbox align="center" style="margin-bottom: 8px;">
+        <html:label id="zotero-prefpane-__addonRef__-providerLabel" for="zotero-prefpane-__addonRef__-provider" style="width: 120px;"
+          >Provider</html:label
+        >
+        <menulist
+          id="zotero-prefpane-__addonRef__-provider"
+          preference="__prefsPrefix__.provider"
+          style="flex: 1; min-width: 200px;"
+        >
+          <menupopup>
+            <menuitem label="OpenAI-compatible" value="openai-compatible" />
+            <menuitem label="Anthropic" value="anthropic" />
+          </menupopup>
+        </menulist>
+      </hbox>
+
+      <hbox align="center" style="margin-bottom: 8px;">
         <html:label id="zotero-prefpane-__addonRef__-apiUrlLabel" for="zotero-prefpane-__addonRef__-apiUrl" style="width: 120px;"
           >API Endpoint</html:label
         >

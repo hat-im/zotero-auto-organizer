@@ -28,7 +28,7 @@
     "restart": "npm run restart-dev",
     "release": "release-it",
     "lint": "prettier --write . && eslint . --ext .ts --fix",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"test/**/*.test.mts\"",
     "update-deps": "npm update --save"
   },
   "repository": {
@@ -42,6 +42,10 @@
   },
   "homepage": "https://github.com/justinfjx/zotero-ai-collection#readme",
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.89",
+    "@ai-sdk/openai-compatible": "^3.0.79",
+    "ai": "^7.0.154",
+    "zod": "^4.6.7",
     "zotero-plugin-toolkit": "^2.1.3"
   },
   "devDependencies": {

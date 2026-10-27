@@ -3,9 +3,11 @@ import { getString } from "../utils/locale";
 import { testConnection } from "./api";
 import { getPref, setPref } from "../utils/prefs";
 import { DEFAULT_PROMPT } from "../utils/constants";
+import type { ProviderKind } from "./llm";
 
 interface ApiConfig {
   name: string;
+  provider?: ProviderKind;
   apiUrl: string;
   model: string;
   apiKey: string;
@@ -117,6 +119,7 @@ function localizePrefsUI(doc: Document) {
   setText("saveConfig", "prefs.saveConfig", "label");
   setText("renameConfig", "prefs.rename", "label");
   setText("deleteConfig", "prefs.delete", "label");
+  setText("providerLabel", "prefs.provider");
   setText("apiUrlLabel", "prefs.apiUrl");
   setText("modelLabel", "prefs.model");
   setText("apiKeyLabel", "prefs.apiKey");
@@ -219,6 +222,7 @@ function loadConfig(name: string) {
 
   if (name === "Default") {
     // Reset to default values
+    setPref("provider", "openai-compatible");
     setPref("apiUrl", "https://api.openai.com/v1/chat/completions");
     setPref("model", "gpt-3.5-turbo");
     setPref("apiKey", "");
@@ -226,6 +230,7 @@ function loadConfig(name: string) {
     const configs = getApiConfigs();
     const cfg = configs.find((c) => c.name === name);
     if (cfg) {
+      setPref("provider", cfg.provider || "openai-compatible");
       setPref("apiUrl", cfg.apiUrl);
       setPref("model", cfg.model);
       setPref("apiKey", cfg.apiKey);
@@ -235,6 +240,9 @@ function loadConfig(name: string) {
   setPref("currentConfigName", name);
 
   // Update UI
+  const providerSelect = doc.querySelector(
+    `#zotero-prefpane-${config.addonRef}-provider`
+  ) as XUL.MenuList;
   const apiUrlInput = doc.querySelector(
     `#zotero-prefpane-${config.addonRef}-apiUrl`
   ) as HTMLInputElement;
@@ -245,6 +253,7 @@ function loadConfig(name: string) {
     `#zotero-prefpane-${config.addonRef}-apiKey`
   ) as HTMLInputElement;
 
+  if (providerSelect) providerSelect.value = getPref("provider") as string;
   if (apiUrlInput) apiUrlInput.value = getPref("apiUrl") as string;
   if (modelInput) modelInput.value = getPref("model") as string;
   if (apiKeyInput) apiKeyInput.value = getPref("apiKey") as string;
@@ -302,6 +311,7 @@ function bindPrefEvents() {
       const existingIdx = configs.findIndex((c) => c.name === name);
       const newConfig: ApiConfig = {
         name: name.trim(),
+        provider: getPref("provider") as ProviderKind,
         apiUrl: getPref("apiUrl") as string,
         model: getPref("model") as string,
         apiKey: getPref("apiKey") as string,
