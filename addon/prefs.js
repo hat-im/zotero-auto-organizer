@@ -20,3 +20,7 @@ pref("__prefsPrefix__.archiveCollectionName", "未分类");
 
 // Batch processing mode: false = one-by-one confirmation, true = batch confirmation
 pref("__prefsPrefix__.batchMode", false);
+
+// Auto-classify unfiled items once more than this many are unfiled (off by default)
+pref("__prefsPrefix__.autoClassifyUnfiled", false);
+pref("__prefsPrefix__.autoClassifyThreshold", 5);

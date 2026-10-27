@@ -213,6 +213,34 @@
   </groupbox>
 
   <groupbox>
+    <label><html:h2 id="zotero-prefpane-__addonRef__-unfiledTitle">Unfiled Items</html:h2></label>
+    <vbox style="margin: 10px 0;">
+      <hbox align="center" style="margin-bottom: 8px;">
+        <checkbox
+          id="zotero-prefpane-__addonRef__-autoClassifyUnfiled"
+          preference="__prefsPrefix__.autoClassifyUnfiled"
+          label=""
+        />
+      </hbox>
+      <hbox align="center">
+        <html:label id="zotero-prefpane-__addonRef__-autoClassifyThresholdLabel" for="zotero-prefpane-__addonRef__-autoClassifyThreshold" style="width: 180px;"
+          >Threshold</html:label
+        >
+        <html:input
+          type="number"
+          min="1"
+          id="zotero-prefpane-__addonRef__-autoClassifyThreshold"
+          preference="__prefsPrefix__.autoClassifyThreshold"
+          style="width: 80px;"
+        />
+      </hbox>
+      <html:label id="zotero-prefpane-__addonRef__-autoClassifyHelp" style="margin-left: 20px; color: #666; font-size: 11px;">
+        When enabled, items are classified automatically once more than this many unfiled items have accumulated. You can also run Tools &gt; AI Classify Unfiled Items at any time.
+      </html:label>
+    </vbox>
+  </groupbox>
+
+  <groupbox>
     <label><html:h2 id="zotero-prefpane-__addonRef__-translationTitle">Translation Settings</html:h2></label>
     <vbox style="margin: 10px 0;">
       <hbox align="center">

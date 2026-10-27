@@ -145,6 +145,12 @@ function localizePrefsUI(doc: Document) {
   setText("archiveLabel", "prefs.archiveCollectionName");
   setText("archiveHelp", "prefs.archiveCollectionNameHelp");
 
+  // Unfiled items section
+  setText("unfiledTitle", "prefs.unfiledTitle");
+  setText("autoClassifyUnfiled", "prefs.autoClassifyUnfiled", "label");
+  setText("autoClassifyThresholdLabel", "prefs.autoClassifyThreshold");
+  setText("autoClassifyHelp", "prefs.autoClassifyUnfiledHelp");
+
   // Translation section
   setText(
     "enableChineseTranslation",
