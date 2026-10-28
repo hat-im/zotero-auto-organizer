@@ -140,6 +140,8 @@ function localizePrefsUI(doc: Document) {
   setText("modeOneByOne", "prefs.modeOneByOne", "label");
   setText("modeBatch", "prefs.modeBatch", "label");
   setText("batchModeHelp", "prefs.modeBatchHelp");
+  setText("autoConfirm", "prefs.autoConfirm", "label");
+  setText("autoConfirmHelp", "prefs.autoConfirmHelp");
   setText("addToAllPathCollections", "prefs.addToAllPathCollections", "label");
   setText("addToAllPathHelp", "prefs.addToAllPathCollectionsHelp");
   setText("archiveLabel", "prefs.archiveCollectionName");

@@ -20,3 +20,6 @@ pref("__prefsPrefix__.archiveCollectionName", "未分类");
 
 // Batch processing mode: false = one-by-one confirmation, true = batch confirmation
 pref("__prefsPrefix__.batchMode", false);
+
+// One-by-one mode: apply AI suggestions without asking for confirmation
+pref("__prefsPrefix__.autoConfirm", false);

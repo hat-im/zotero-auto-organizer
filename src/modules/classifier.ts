@@ -635,11 +635,12 @@ async function showClassificationDialog(
         },
       })
       .open(getString("dialog.title") || "AI 分类确认", {
-        fitContent: true,
+        // Fixed size so buttons stay in the same place from paper to paper
+        fitContent: false,
         centerscreen: true,
         resizable: true,
-        width: 450,
-        height: 400,
+        width: 480,
+        height: 420,
       });
   });
 }
@@ -1116,6 +1117,10 @@ async function showBatchClassificationDialog(
   });
 }
 
+function isPrefTrue(value: unknown): boolean {
+  return value === true || value === "true";
+}
+
 /**
  * Process items one by one with individual confirmation dialogs
  */
@@ -1131,6 +1136,7 @@ async function classifyItemsOneByOne(
   const optionByID = new Map(
     collectionOptions.map((option) => [option.id, option])
   );
+  const autoConfirm = isPrefTrue(getPref("autoConfirm"));
 
   // Show progress window
   const popupWin = new ztoolkit.ProgressWindow(config.addonName, {
@@ -1170,21 +1176,26 @@ async function classifyItemsOneByOne(
       );
 
       if (validOptions.length === 0) {
-        win.alert(
-          `[${processed}/${regularItems.length}] ${
-            getString("error.noclassification") ||
-            "No suitable classification found"
-          }\n\n${title}`
-        );
+        if (autoConfirm) {
+          ztoolkit.log("[AI Classifier] No classification found:", title);
+        } else {
+          win.alert(
+            `[${processed}/${regularItems.length}] ${
+              getString("error.noclassification") ||
+              "No suitable classification found"
+            }\n\n${title}`
+          );
+        }
         continue;
       }
 
-      // Show confirmation dialog
-      const dialogResult = await showClassificationDialog(
-        title,
-        chineseTitle,
-        validOptions
-      );
+      // Show confirmation dialog (skipped in auto-confirm mode)
+      const dialogResult = autoConfirm
+        ? {
+            action: "confirm" as const,
+            selectedOptionIDs: validOptions.map((option) => option.id),
+          }
+        : await showClassificationDialog(title, chineseTitle, validOptions);
 
       // Handle user's choice
       ztoolkit.log(
@@ -1235,11 +1246,13 @@ async function classifyItemsOneByOne(
       }
     } catch (e: any) {
       ztoolkit.log("Classification error:", e);
-      win.alert(
-        `[${processed}/${regularItems.length}] ${
-          getString("error.processing") || "Processing failed:"
-        } ${e.message}\n\n${title}`
-      );
+      if (!autoConfirm) {
+        win.alert(
+          `[${processed}/${regularItems.length}] ${
+            getString("error.processing") || "Processing failed:"
+          } ${e.message}\n\n${title}`
+        );
+      }
     }
   }
 
