@@ -198,6 +198,18 @@
         Batch mode processes all selected items with AI first, then shows a single dialog for reviewing all results.
       </html:label>
 
+      <!-- Auto confirm (one-by-one mode) -->
+      <hbox align="center" style="margin-top: 8px;">
+        <checkbox
+          id="zotero-prefpane-__addonRef__-autoConfirm"
+          preference="__prefsPrefix__.autoConfirm"
+          label=""
+        />
+      </hbox>
+      <html:label id="zotero-prefpane-__addonRef__-autoConfirmHelp" style="margin-left: 20px; color: #666; font-size: 11px; margin-bottom: 12px;">
+        Apply AI suggestions without asking. Applies to one-by-one mode.
+      </html:label>
+
       <!-- Add to all path collections -->
       <hbox align="center" style="margin-bottom: 8px; margin-top: 8px;">
         <checkbox

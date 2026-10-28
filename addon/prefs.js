@@ -39,3 +39,6 @@ pref("__prefsPrefix__.proposeNewCollections", false);
 pref("__prefsPrefix__.proposalMinItems", 10);
 pref("__prefsPrefix__.allowNewTopLevel", false);
 pref("__prefsPrefix__.pendingProposals", "{}");
+
+// One-by-one mode: apply AI suggestions without asking for confirmation
+pref("__prefsPrefix__.autoConfirm", false);
