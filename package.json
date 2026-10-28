@@ -1,6 +1,6 @@
 {
   "name": "zotero-ai-collection",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "AI-powered literature classification for Zotero",
   "config": {
     "addonName": "Collection for Zotero",
@@ -8,8 +8,8 @@
     "addonRef": "zoteroaicollection",
     "addonInstance": "ZoteroAICollection",
     "prefsPrefix": "extensions.zotero.zoteroaicollection",
-    "releasepage": "https://github.com/justinfjx/zotero-ai-collection/releases/latest/download/zotero-ai-collection.xpi",
-    "updaterdf": "https://raw.githubusercontent.com/justinfjx/zotero-ai-collection/main/update.json"
+    "releasepage": "https://github.com/hat-im/zotero-auto-organizer/releases/latest/download/zotero-ai-collection.xpi",
+    "updaterdf": "https://raw.githubusercontent.com/hat-im/zotero-auto-organizer/main/update.json"
   },
   "main": "src/index.ts",
   "scripts": {
