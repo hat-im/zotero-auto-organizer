@@ -42,10 +42,10 @@ const proposalSchema = baseSchema.extend({
 });
 
 // Hidden format instruction - not editable by user
-const FORMAT_INSTRUCTION = `规则：可用分类每行格式为 [分类ID] 分类路径。只能选择列表中已存在的分类ID，在 collectionIDs 字段中返回数字ID数组，不要返回分类路径。无合适分类时返回空数组。`;
+const FORMAT_INSTRUCTION = `Rules: each available collection is listed as [ID] path. Choose only collections that exist in the list and return their numeric IDs as an array in the collectionIDs field, not their paths. If no collection fits, return an empty array.`;
 
 // Hidden translation instruction - appended when translation is enabled
-const TRANSLATION_INSTRUCTION = `另外，请将文献标题翻译成中文，填入 chineseTitle 字段。`;
+const TRANSLATION_INSTRUCTION = `Also translate the paper title into Chinese and put it in the chineseTitle field.`;
 
 /**
  * Build the instruction that lets the AI suggest a new collection
@@ -54,11 +54,13 @@ const TRANSLATION_INSTRUCTION = `另外，请将文献标题翻译成中文，�
  */
 function buildProposalInstruction(options: ProposalOptions): string {
   const top = options.allowTopLevel
-    ? "，为 null 表示新建顶级分类"
-    : "，不允许新建顶级分类";
+    ? ", or null to create a top-level collection"
+    : ", top-level collections are not allowed";
   const depth =
-    options.maxDepth > 0 ? `新分类的层级不得超过 ${options.maxDepth} 层。` : "";
-  return `如果现有分类都不合适，可以在 newCollection 字段中建议新建一个分类：parentID 为父分类ID（只能从“可作为父分类”列表中选择${top}），name 为新分类名称（简短，不含“/”）。仅在确实没有合适分类时才建议，否则不要返回 newCollection。${depth}`;
+    options.maxDepth > 0
+      ? ` The new collection must not be deeper than level ${options.maxDepth}.`
+      : "";
+  return `If no existing collection fits, you may suggest one new collection in the newCollection field: parentID is the ID of its parent (choose only from the "Possible parents" list${top}) and name is the new collection's name (short, without "/"). Suggest one only when nothing fits; otherwise omit newCollection.${depth}`;
 }
 
 /**
@@ -69,11 +71,11 @@ function buildProposalInstruction(options: ProposalOptions): string {
 function buildProposalContext(options: ProposalOptions): string {
   const parents = options.parents.map((p) => `[${p.id}] ${p.path}`).join("\n");
   const open = options.openPaths.length
-    ? `\n\n已建议的新分类（主题相同请使用完全相同的名称）:\n${options.openPaths.join(
+    ? `\n\nAlready suggested new collections (use the exact same name for the same topic):\n${options.openPaths.join(
         "\n"
       )}`
     : "";
-  return `\n\n可作为父分类:\n${parents}${open}`;
+  return `\n\nPossible parents:\n${parents}${open}`;
 }
 
 /**
@@ -125,10 +127,10 @@ export async function callAI(
     .filter(Boolean)
     .join("\n");
 
-  const userPrompt = `标题: ${title}
-摘要: ${abstract}
+  const userPrompt = `Title: ${title}
+Abstract: ${abstract}
 
-可用分类:
+Available collections:
 ${collectionListStr}${proposals ? buildProposalContext(proposals) : ""}`;
 
   const schema: z.ZodType<z.infer<typeof proposalSchema>> = proposals

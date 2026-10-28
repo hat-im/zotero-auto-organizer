@@ -130,8 +130,8 @@ test("asks for a new collection only when proposals are enabled", async () => {
     assert.match(withProposals, /newCollection/);
     assert.match(withProposals, /\[7\] Hardware/);
     assert.match(withProposals, /Hardware\/Chips/);
-    assert.match(withProposals, /不得超过 2 层/);
-    assert.match(withProposals, /不允许新建顶级分类/);
+    assert.match(withProposals, /not be deeper than level 2/);
+    assert.match(withProposals, /top-level collections are not allowed/);
   } finally {
     await fake.close();
   }
@@ -147,8 +147,8 @@ test("allowing top-level collections changes the instruction", async () => {
       maxDepth: 0,
     });
     const sent = JSON.stringify(fake.requests[0].body);
-    assert.match(sent, /为 null 表示新建顶级分类/);
-    assert.doesNotMatch(sent, /不得超过/);
+    assert.match(sent, /or null to create a top-level collection/);
+    assert.doesNotMatch(sent, /not be deeper than/);
   } finally {
     await fake.close();
   }
