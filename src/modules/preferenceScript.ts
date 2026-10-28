@@ -661,7 +661,7 @@ function setEnabledCollections(ids: number[]) {
  */
 function buildCollectionNodeFromCollection(
   collection: Zotero.Collection,
-  prefix: string = ""
+  prefix = ""
 ): CollectionNode {
   const path = prefix ? `${prefix}/${collection.name}` : collection.name;
   const childCollections = collection.getChildCollections(false);
@@ -853,7 +853,7 @@ function renderCollectionTree(
   container: HTMLDivElement,
   nodes: CollectionNode[],
   enabledIDs: Set<number>,
-  level: number = 0
+  level = 0
 ) {
   const doc = container.ownerDocument;
 
