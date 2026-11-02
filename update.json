@@ -3,8 +3,8 @@
     "zotero-ai-collection@jiaxin.fan": {
       "updates": [
         {
-          "version": "0.0.4",
-          "update_link": "https://github.com/justinfjx/zotero-ai-collection/releases/latest/download/zotero-ai-collection.xpi",
+          "version": "0.1.0",
+          "update_link": "https://github.com/hat-im/zotero-auto-organizer/releases/latest/download/zotero-ai-collection.xpi",
           "applications": {
             "gecko": {
               "strict_min_version": "60.0"
@@ -12,8 +12,8 @@
           }
         },
         {
-          "version": "0.0.4",
-          "update_link": "https://github.com/justinfjx/zotero-ai-collection/releases/latest/download/zotero-ai-collection.xpi",
+          "version": "0.1.0",
+          "update_link": "https://github.com/hat-im/zotero-auto-organizer/releases/latest/download/zotero-ai-collection.xpi",
           "applications": {
             "zotero": {
               "strict_min_version": "6.999",

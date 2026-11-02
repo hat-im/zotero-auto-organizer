@@ -2,19 +2,18 @@ import { config } from "../../package.json";
 import { AICollectionCandidate, callAI } from "./api";
 import { getString } from "../utils/locale";
 import { getPref } from "../utils/prefs";
-
-const PATH_SEPARATOR = "/";
-
-interface CollectionOption extends AICollectionCandidate {
-  collection: Zotero.Collection;
-  segments: string[];
-  ancestors: Zotero.Collection[];
-}
-
-interface CollectionNode {
-  option: CollectionOption;
-  children: CollectionNode[];
-}
+import {
+  getProposalOptions,
+  recordSuggestion,
+  reviewSuggestions,
+} from "./newCollections";
+import {
+  buildCollectionNodes,
+  flattenNodes,
+  getLeafOptions,
+  type CollectionNode,
+  type CollectionOption,
+} from "./collectionTree";
 
 interface EnabledCollections {
   ids: Set<number>;
@@ -82,47 +81,6 @@ function getEnabledCollections(): EnabledCollections {
   }
 }
 
-function buildNodeFromCollection(
-  collection: Zotero.Collection,
-  parentSegments: string[] = [],
-  ancestors: Zotero.Collection[] = []
-): CollectionNode {
-  const segments = [...parentSegments, collection.name];
-  const option: CollectionOption = {
-    id: collection.id,
-    path: segments.join(PATH_SEPARATOR),
-    collection,
-    segments,
-    ancestors,
-  };
-
-  return {
-    option,
-    children: collection
-      .getChildCollections(false)
-      .map((child) =>
-        buildNodeFromCollection(child, segments, [...ancestors, collection])
-      ),
-  };
-}
-
-function buildCollectionNodes(
-  collections: Zotero.Collection[]
-): CollectionNode[] {
-  return collections
-    .filter((col) => !col.parentID)
-    .map((col) => buildNodeFromCollection(col));
-}
-
-function flattenNodes(nodes: CollectionNode[]): CollectionNode[] {
-  let result: CollectionNode[] = [];
-  for (const node of nodes) {
-    result.push(node);
-    result = result.concat(flattenNodes(node.children));
-  }
-  return result;
-}
-
 function isNodeEnabled(
   node: CollectionNode,
   enabledCollections: EnabledCollections
@@ -148,18 +106,6 @@ function hasEnabledDescendant(
   return false;
 }
 
-function getLeafOptions(node: CollectionNode): CollectionOption[] {
-  if (node.children.length === 0) {
-    return [node.option];
-  }
-
-  let options: CollectionOption[] = [];
-  for (const child of node.children) {
-    options = options.concat(getLeafOptions(child));
-  }
-  return options;
-}
-
 /**
  * Build collection options, filtered by enabled collections.
  * Returns actual leaf nodes (deepest paths) for each enabled subtree
@@ -168,7 +114,10 @@ function buildCollectionOptions(
   collections: Zotero.Collection[]
 ): CollectionOption[] {
   const enabledCollections = getEnabledCollections();
-  const tree = buildCollectionNodes(collections);
+  const tree = buildCollectionNodes(
+    collections,
+    Number(getPref("maxDepth")) || 0
+  );
   const allNodes = flattenNodes(tree);
 
   // If no enabled collections stored yet (first time), return all leaf nodes
@@ -635,11 +584,12 @@ async function showClassificationDialog(
         },
       })
       .open(getString("dialog.title") || "AI 分类确认", {
-        fitContent: true,
+        // Fixed size so buttons stay in the same place from paper to paper
+        fitContent: false,
         centerscreen: true,
         resizable: true,
-        width: 450,
-        height: 400,
+        width: 480,
+        height: 420,
       });
   });
 }
@@ -1116,6 +1066,10 @@ async function showBatchClassificationDialog(
   });
 }
 
+function isPrefTrue(value: unknown): boolean {
+  return value === true || value === "true";
+}
+
 /**
  * Process items one by one with individual confirmation dialogs
  */
@@ -1131,6 +1085,7 @@ async function classifyItemsOneByOne(
   const optionByID = new Map(
     collectionOptions.map((option) => [option.id, option])
   );
+  const autoConfirm = isPrefTrue(getPref("autoConfirm"));
 
   // Show progress window
   const popupWin = new ztoolkit.ProgressWindow(config.addonName, {
@@ -1161,8 +1116,10 @@ async function classifyItemsOneByOne(
         title,
         abstract,
         collectionOptions,
-        enableTranslation
+        enableTranslation,
+        getProposalOptions(libraryID)
       );
+      recordSuggestion(currentItem, aiResult);
       const chineseTitle = aiResult.chineseTitle;
       const validOptions = resolveAICollectionOptions(
         aiResult,
@@ -1170,21 +1127,26 @@ async function classifyItemsOneByOne(
       );
 
       if (validOptions.length === 0) {
-        win.alert(
-          `[${processed}/${regularItems.length}] ${
-            getString("error.noclassification") ||
-            "No suitable classification found"
-          }\n\n${title}`
-        );
+        if (autoConfirm) {
+          ztoolkit.log("[AI Classifier] No classification found:", title);
+        } else {
+          win.alert(
+            `[${processed}/${regularItems.length}] ${
+              getString("error.noclassification") ||
+              "No suitable classification found"
+            }\n\n${title}`
+          );
+        }
         continue;
       }
 
-      // Show confirmation dialog
-      const dialogResult = await showClassificationDialog(
-        title,
-        chineseTitle,
-        validOptions
-      );
+      // Show confirmation dialog (skipped in auto-confirm mode)
+      const dialogResult = autoConfirm
+        ? {
+            action: "confirm" as const,
+            selectedOptionIDs: validOptions.map((option) => option.id),
+          }
+        : await showClassificationDialog(title, chineseTitle, validOptions);
 
       // Handle user's choice
       ztoolkit.log(
@@ -1235,11 +1197,13 @@ async function classifyItemsOneByOne(
       }
     } catch (e: any) {
       ztoolkit.log("Classification error:", e);
-      win.alert(
-        `[${processed}/${regularItems.length}] ${
-          getString("error.processing") || "Processing failed:"
-        } ${e.message}\n\n${title}`
-      );
+      if (!autoConfirm) {
+        win.alert(
+          `[${processed}/${regularItems.length}] ${
+            getString("error.processing") || "Processing failed:"
+          } ${e.message}\n\n${title}`
+        );
+      }
     }
   }
 
@@ -1307,8 +1271,10 @@ async function classifyItemsBatch(
         title,
         abstract,
         collectionOptions,
-        enableTranslation
+        enableTranslation,
+        getProposalOptions(libraryID)
       );
+      recordSuggestion(currentItem, aiResult);
       const chineseTitle = aiResult.chineseTitle;
       const validOptions = resolveAICollectionOptions(
         aiResult,
@@ -1470,4 +1436,6 @@ export async function classifyItems(items: Zotero.Item[]): Promise<void> {
       getString("result.added") || "Collections added:"
     } ${result.totalAdded}${egg}`
   );
+
+  await reviewSuggestions(libraryID, regularItems);
 }
